@@ -23,6 +23,7 @@ def submit_user():
     query = 'SELECT * FROM users WHERE users.email = %(email)s;'
     data = {'email': request.form['email']}
     result = mysql.query_db(query,data)
+    pw_hash= bcrypt.generate_password_hash(request.form['password'])
     if len(session['first_name']) < 3 or len(session['first_name']) < 1:
         flash('First name must contain at least 2 characters')
         return redirect('/')
@@ -57,12 +58,12 @@ def submit_user():
         flash('You must be at least 10 years old to register')
         return redirect('/')
     else:
-        query = 'INSERT INTO users(first_name, last_name, email, created_at, updated_at, password, birthday, fav_color) VALUES (%(first_name)s, %(last_name)s, %(email)s, NOW(), NOW(), %(password)s, %(birthday)s, %(fav_color)s);'
+        query = 'INSERT INTO users(first_name, last_name, email, created_at, updated_at, password, birthday, fav_color) VALUES (%(first_name)s, %(last_name)s, %(email)s, NOW(), NOW(), %(password_hash)s, %(birthday)s, %(fav_color)s);'
         data = {
                 'first_name' : request.form['first_name'],
                 'last_name' : request.form['last_name'],
                 'email' : request.form['email'],
-                'password': request.form['password'], 
+                'password_hash': pw_hash, 
                 'birthday': request.form['birthday'],
                 'fav_color': request.form['fav_color']
                 }
@@ -72,25 +73,22 @@ def submit_user():
 
 @app.route('/login', methods=['POST'])
 def login_user():
-    query = 'SELECT * FROM users WHERE users.email = %(email)s AND users.password = %(password)s;'
-    data ={ 'email' : request.form['email'], 'password' :request.form['pw']  }
+    query = 'SELECT * FROM users WHERE users.email = %(email)s;'
+    data ={ 'email' : request.form['email']}
     result = mysql.query_db(query, data)
+ 
     if 'id' in session:
         if session['id'] == result[0]['id']:
             flash('You are already logged in')
             return redirect('/')
-    if len(result) == 1:
-        session['id'] = result[0]['id']
-        flash('You have logged in')
-        return redirect('/')
+    if len(result) == 1: 
+        if bcrypt.check_password_hash(result[0]['password'], request.form['pw']):
+            session['id'] = result[0]['id']
+            flash('You have logged in')
+            return redirect('/')
     else:
         flash('Invalid Login Info')
         return redirect('/')
 
-
-
-    
-
-    
 
 app.run(debug=True)
