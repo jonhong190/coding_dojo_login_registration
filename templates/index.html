@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="css/bootstrap.css") }}'>
+</head>
+<body>
+    <div id='wrapper'>
+        <nav class="navbar navbar-light bg-light">
+            <h1>Register and Login</h1>
+        </nav>
+         
+        
+        <form action='/submit' method='post'>
+            <h3>Registration</h3>
+            <label for='first_name'>First Name:</label>
+            <input type='text' class='form-control' name='first_name'>
+            <br>
+            <label for='last_name'>Last Name:</label>
+            <input type='text' class='form-control' name='last_name'>
+            <br>
+            <label for='email'>Email:</label>
+            <input type='text' class='form-control' name='email'>
+            <br>
+            <label for='password'>Password:</label>
+            <input type='password' class='form-control' name='password'><br>
+            <small id='passwordHelpBlock' class='form-text text-muted'>
+                Your password must be at least 8 characters long.
+            </small>
+            <label for='password'>Confirm Password</label>
+            <input type='password' class='form-control' name='confirm'>
+            <br>
+            <label for="birthday" class="form-control">Birthday:</label>
+            <input type="date" class="form-control" name="birthday"><br>
+            <label for='fav_color'>Pick your favorite color</label>
+            <select class="form-control" id="exampleFormControlSelect1" name='fav_color'>
+                <option>Red</option>
+                <option>Blue</option>
+                <option>Yellow</option>
+                <option>I'm colorblind</option>
+            </select><br>
+            <button type='submit' class='btn btn-primary'>Submit</button>
+             
+        </form>
+          
+            
+        <form action='/login' method='post'>
+            <h3>Login</h3>
+            <label for='email'>Email:</label>
+            <input type='text' class='form-control' name='email'>
+            <label for='pw'>Password:</label>
+            <input type='password' class='form-control' name='pw'><br>
+            <button type='submit' class='btn btn-primary'>Login</button>
+        </form>
+         {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %} {% endif %} {% endwith %}
+    </div>
+</body>
+</html>
